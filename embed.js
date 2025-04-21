@@ -208,6 +208,7 @@
                     mode: 'cors',
                     body: JSON.stringify({ 
                         message,
+                        user_record_id: userRecordId,
                         conversationHistory: Array.from(messagesContainer.children)
                             .filter(div => div !== thinkingDiv)
                             .map(div => ({
