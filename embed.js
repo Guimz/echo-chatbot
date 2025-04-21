@@ -185,6 +185,18 @@
             messageInput.disabled = true;
             sendButton.disabled = true;
 
+            // Add thinking message with animation
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto';
+            thinkingDiv.textContent = '.';
+            messagesContainer.appendChild(thinkingDiv);
+            
+            let dots = 1;
+            const thinkingInterval = setInterval(() => {
+                dots = (dots % 3) + 1;
+                thinkingDiv.textContent = '.'.repeat(dots);
+            }, 500);
+
             try {
                 // Send to webhook
                 const response = await fetch(window.echoConfig.webhookUrl, {
@@ -196,10 +208,12 @@
                     mode: 'cors',
                     body: JSON.stringify({ 
                         message,
-                        conversationHistory: Array.from(messagesContainer.children).map(div => ({
-                            role: div.classList.contains('ml-auto') ? 'user' : 'bot',
-                            content: div.textContent
-                        }))
+                        conversationHistory: Array.from(messagesContainer.children)
+                            .filter(div => div !== thinkingDiv)
+                            .map(div => ({
+                                role: div.classList.contains('ml-auto') ? 'user' : 'bot',
+                                content: div.textContent
+                            }))
                     })
                 });
 
@@ -214,13 +228,19 @@
                     throw new Error('No response from bot');
                 }
 
-                // Add bot response
+                // Remove thinking message and add bot response
+                clearInterval(thinkingInterval);
+                messagesContainer.removeChild(thinkingDiv);
+                
                 const botDiv = document.createElement('div');
                 botDiv.className = 'p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto';
                 botDiv.textContent = botResponse;
                 messagesContainer.appendChild(botDiv);
             } catch (error) {
                 console.error('Error:', error);
+                clearInterval(thinkingInterval);
+                messagesContainer.removeChild(thinkingDiv);
+                
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'p-3 rounded-lg max-w-[75%] bg-red-100 text-red-800 mr-auto';
                 errorDiv.textContent = 'Sorry, I encountered an error. Please try again.';
