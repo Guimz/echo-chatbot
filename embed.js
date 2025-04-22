@@ -16,7 +16,7 @@
 
     // Get user_record_id from script tag
     const scriptTag = document.currentScript;
-    const userRecordId = scriptTag.getAttribute('user_record_id');
+    window.userRecordId = scriptTag.getAttribute('user_record_id');
 
     // Create and append the widget container
     const container = document.createElement('div');
@@ -208,7 +208,7 @@
                     mode: 'cors',
                     body: JSON.stringify({ 
                         message,
-                        user_record_id: userRecordId,
+                        user_record_id: window.userRecordId,
                         conversationHistory: Array.from(messagesContainer.children)
                             .filter(div => div !== thinkingDiv)
                             .map(div => ({
