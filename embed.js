@@ -6,7 +6,7 @@
             primaryColor: '#003459',
             textColor: '#E6E1C5',
             botName: 'Echo Bot',
-            welcomeMessage: 'Hello! What is your question?',
+            welcomeMessage: 'Hi, I hope you are well, How can I help?',
             inputPlaceholder: "Ask your question...",
             inputTextColor: "#003459",
             inputHighlightBoxColor: "#003459"
