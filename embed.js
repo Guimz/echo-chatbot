@@ -39,32 +39,45 @@
         initializeWidget();
     };
 
+    // Function to get config from Cloudflare KV
+    async function fetchUserConfig(userRecordId) {
+        try {
+            const response = await fetch(
+                `https://echo-chatbot-config.bruno-e2f.workers.dev/api/config/${userRecordId}`
+            );
+            
+            if (!response.ok) {
+                // If 404, the user doesn't have a config yet
+                if (response.status === 404) {
+                    const notFoundData = await response.json();
+                    // Use the default config provided by the worker
+                    if (notFoundData.default) {
+                        return notFoundData.default;
+                    }
+                }
+                console.warn('Failed to fetch brand config:', response.status, response.statusText);
+                return null;
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching config:', error);
+            return null;
+        }
+    }
+
     // Fetch brand configuration from API
     async function initializeWidget() {
         try {
             if (userRecordId) {
-                const response = await fetch(`https://echo.saltoai.com/api/brand-config/${userRecordId}`);
-                
-                if (!response.ok) {
-                    console.warn('Failed to fetch brand config:', response.status, response.statusText);
-                    createWidget();
-                    return;
+                const brandConfig = await fetchUserConfig(userRecordId);
+                if (brandConfig) {
+                    // Merge API config with defaults
+                    window.echoConfig = {
+                        ...window.echoConfig,
+                        ...brandConfig
+                    };
                 }
-
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    console.warn('Invalid content type received:', contentType);
-                    createWidget();
-                    return;
-                }
-
-                const brandConfig = await response.json();
-                
-                // Merge API config with defaults
-                window.echoConfig = {
-                    ...window.echoConfig,
-                    ...brandConfig
-                };
             }
             // If no user_record_id or API call fails, use default config
             createWidget();
@@ -262,4 +275,4 @@
 
     // Start initialization
     initializeWidget();
-})(); 
+})();
