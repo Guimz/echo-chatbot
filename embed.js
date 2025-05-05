@@ -29,7 +29,7 @@
     // Load styles
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'styles.css';
+    link.href = 'https://chat.echo.saltoai.com/styles.css';
     document.head.appendChild(link);
 
     // Wait for Tailwind to load before initializing
