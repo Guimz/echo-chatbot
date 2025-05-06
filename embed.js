@@ -148,7 +148,7 @@
                     ${window.echoConfig.showBranding ? `
                     <div class="p-2 text-center text-xs text-gray-500">
                         Powered by 
-                        <img src="salto_ai_logo.png" alt="Salto AI" class="h-4 w-auto mx-1 inline-block">
+                        <img src="https://chat.echo.saltoai.com/salto_ai_logo.png" alt="Salto AI" class="h-4 w-auto mx-1 inline-block">
                         Salto AI
                     </div>
                     ` : ''}
