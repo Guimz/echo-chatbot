@@ -1,7 +1,7 @@
 (function() {
     // Default configuration that will be overridden by API config
     window.echoConfig = window.echoConfig || {
-        webhookUrl: 'http://localhost:5678/webhook/chat',
+        webhookUrl: 'https://n8n.saltoai.com/webhook/chat',
         primaryColor: '#003459',
         textColor: '#E6E1C5',
         botName: 'Echo Bot',
