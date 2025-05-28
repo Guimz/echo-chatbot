@@ -2,8 +2,8 @@
     // Default configuration that will be overridden by API config
     window.echoConfig = window.echoConfig || {
         webhookUrl: 'https://n8n.saltoai.com/webhook/chat',
-        primaryColor: '#003459',
-        textColor: '#E6E1C5',
+        primaryColor: '#B9D8F9',
+        textColor: '#003459',
         botName: 'Echo Bot',
         welcomeMessage: 'Hi, I hope you are well, How can I help?',
         inputPlaceholder: "Ask your question...",
@@ -98,7 +98,7 @@
                 </button>
 
                 <!-- Chat Window -->
-                <div id="chat-window" class="hidden w-96 h-[600px] bg-white rounded-lg shadow-lg flex flex-col">
+                <div id="chat-window" class="hidden w-96 h-[600px] bg-white rounded-b-lg shadow-lg flex flex-col">
                     <!-- Chat Header -->
                     <div class="p-4 rounded-t-lg flex items-center justify-between" style="background-color: ${window.echoConfig.primaryColor}">
                         <div class="flex items-center gap-2">
@@ -137,7 +137,7 @@
                                    onblur="this.style.boxShadow='none'"
                                    placeholder="${window.echoConfig.inputPlaceholder}">
                             <button id="send-message" 
-                                    class="px-4 py-2 rounded-lg transition-colors"
+                                    class="px-4 py-2 rounded-lg transition-colors font-semibold"
                                     style="background-color: ${window.echoConfig.primaryColor}; color: ${window.echoConfig.textColor}">
                                 Send
                             </button>
@@ -167,10 +167,16 @@
         const sendButton = document.getElementById('send-message');
         const messagesContainer = document.getElementById('messages');
 
+        // Helper to scroll to the bottom
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
         // Toggle chat window
         chatToggle.addEventListener('click', () => {
             chatWindow.classList.remove('hidden');
             chatToggle.classList.add('hidden');
+            scrollToBottom();
         });
 
         closeChat.addEventListener('click', () => {
@@ -190,6 +196,7 @@
             userDiv.style.color = window.echoConfig.textColor;
             userDiv.textContent = message;
             messagesContainer.appendChild(userDiv);
+            scrollToBottom();
 
             // Clear input
             messageInput.value = '';
@@ -201,6 +208,7 @@
             thinkingDiv.className = 'p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto';
             thinkingDiv.textContent = '.';
             messagesContainer.appendChild(thinkingDiv);
+            scrollToBottom();
             
             let dots = 1;
             const thinkingInterval = setInterval(() => {
@@ -248,6 +256,7 @@
                 botDiv.className = 'p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto';
                 botDiv.textContent = botResponse;
                 messagesContainer.appendChild(botDiv);
+                scrollToBottom();
             } catch (error) {
                 console.error('Error:', error);
                 clearInterval(thinkingInterval);
@@ -257,11 +266,12 @@
                 errorDiv.className = 'p-3 rounded-lg max-w-[75%] bg-red-100 text-red-800 mr-auto';
                 errorDiv.textContent = 'Sorry, I encountered an error. Please try again.';
                 messagesContainer.appendChild(errorDiv);
+                scrollToBottom();
             } finally {
                 messageInput.disabled = false;
                 sendButton.disabled = false;
                 messageInput.focus();
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                scrollToBottom();
             }
         };
 
