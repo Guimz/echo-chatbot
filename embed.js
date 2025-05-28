@@ -89,7 +89,7 @@
     function createWidget() {
         // Create widget HTML
         const widgetHTML = `
-            <div id="echo-chat-widget" class="fixed bottom-4 right-4 z-50 bg-white">
+            <div id="echo-chat-widget" class="fixed bottom-4 right-4 z-50">
                 <!-- Chat Button -->
                 <button id="chat-toggle" class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors bg-[${window.echoConfig.primaryColor}]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="${window.echoConfig.textColor}">
@@ -98,9 +98,9 @@
                 </button>
 
                 <!-- Chat Window -->
-                <div id="chat-window" class="hidden w-96 h-[600px] bg-white rounded-b-lg shadow-lg flex flex-col">
+                <div id="chat-window" class="hidden w-96 h-[600px] bg-white rounded-lg shadow-lg flex flex-col overflow-hidden" style="font-size: 14px; line-height: 1.4;">
                     <!-- Chat Header -->
-                    <div class="p-4 rounded-t-lg overflow-hidden flex items-center justify-between" style="background-color: ${window.echoConfig.primaryColor}">
+                    <div class="p-4 flex items-center justify-between" style="background-color: ${window.echoConfig.primaryColor}">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="${window.echoConfig.textColor}">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -121,9 +121,12 @@
                     </div>
 
                     <!-- Messages Container -->
-                    <div id="messages" class="flex-1 p-4 overflow-y-auto flex flex-col gap-2">
-                        <div class="p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto">
-                            ${window.echoConfig.welcomeMessage}
+                    <div id="messages" class="flex-1 pt-1 pr-3 pb-4 pl-3 overflow-y-auto flex flex-col gap-0.3">
+                        <div class="flex flex-col items-start max-w-[75%] mr-auto">
+                            <div class="text-xs text-gray-400 mb-0.5">${window.echoConfig.botName}</div>
+                            <div class="p-3 rounded-lg bg-gray-100 text-gray-800 w-full">
+                                ${window.echoConfig.welcomeMessage}
+                            </div>
                         </div>
                     </div>
 
@@ -252,10 +255,21 @@
                 clearInterval(thinkingInterval);
                 messagesContainer.removeChild(thinkingDiv);
                 
+                // Create a wrapper for bot label and message
+                const botWrapper = document.createElement('div');
+                botWrapper.className = 'flex flex-col items-start max-w-[75%] mr-auto';
+
+                const botLabel = document.createElement('div');
+                botLabel.className = 'text-xs text-gray-400 mb-0.5';
+                botLabel.textContent = window.echoConfig.botName;
+                botWrapper.appendChild(botLabel);
+
                 const botDiv = document.createElement('div');
-                botDiv.className = 'p-3 rounded-lg max-w-[75%] bg-gray-100 text-gray-800 mr-auto';
+                botDiv.className = 'p-3 rounded-lg bg-gray-100 text-gray-800 w-full';
                 botDiv.textContent = botResponse;
-                messagesContainer.appendChild(botDiv);
+                botWrapper.appendChild(botDiv);
+
+                messagesContainer.appendChild(botWrapper);
                 scrollToBottom();
             } catch (error) {
                 console.error('Error:', error);
