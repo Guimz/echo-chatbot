@@ -9,7 +9,8 @@
         inputPlaceholder: "Ask your question...",
         inputTextColor: "#003459",
         inputHighlightBoxColor: "#003459",
-        showBranding: true
+        showBranding: true,
+        position: 'bottom-right'
     };
 
     // Get user_record_id from script tag
@@ -87,9 +88,21 @@
     }
 
     function createWidget() {
+        // Determine position class
+        const positionClass = (() => {
+            const pos = (window.echoConfig.position || 'bottom-right').toLowerCase();
+            switch (pos) {
+                case 'bottom-left': return 'fixed bottom-4 left-4';
+                case 'top-right': return 'fixed top-4 right-4';
+                case 'top-left': return 'fixed top-4 left-4';
+                case 'bottom-right':
+                default: return 'fixed bottom-4 right-4';
+            }
+        })();
+
         // Create widget HTML
         const widgetHTML = `
-            <div id="echo-chat-widget" class="fixed bottom-4 right-4 z-50">
+            <div id="echo-chat-widget" class="${positionClass} z-50">
                 <!-- Chat Button -->
                 <button id="chat-toggle" class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-colors bg-[${window.echoConfig.primaryColor}]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="${window.echoConfig.textColor}">
