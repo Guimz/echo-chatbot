@@ -6,7 +6,7 @@
         textColor: '#003459',
         botName: 'Echo Bot',
         welcomeMessage: 'Hi, I hope you are well, How can I help?',
-        inputPlaceholder: "Ask your question...",
+        inputPlaceholder: ["What is Echo Bot?", "Can I see what my customers are asking?", "Can I try it for free?"],
         inputTextColor: "#003459",
         inputHighlightBoxColor: "#003459",
         showBranding: true,
@@ -156,6 +156,9 @@
                         </div>
                     </div>
 
+                    <!-- Suggestion Bubbles -->
+                    <div id="suggestion-bubbles" class="px-4 pb-2 flex flex-wrap gap-2"></div>
+
                     <!-- Input Area -->
                     <div class="p-4 border-t">
                         <div class="flex gap-2">
@@ -195,6 +198,32 @@
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-message');
         const messagesContainer = document.getElementById('messages');
+        const suggestionBubbles = document.getElementById('suggestion-bubbles');
+        let userHasSentMessage = false;
+
+        // Render suggestion bubbles if inputPlaceholder is an array
+        function renderSuggestionBubbles() {
+            if (!Array.isArray(window.echoConfig.inputPlaceholder) || userHasSentMessage) {
+                suggestionBubbles.innerHTML = '';
+                suggestionBubbles.style.display = 'none';
+                return;
+            }
+            suggestionBubbles.innerHTML = '';
+            window.echoConfig.inputPlaceholder.forEach((prompt, idx) => {
+                const bubble = document.createElement('button');
+                bubble.type = 'button';
+                bubble.className = 'rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1 text-sm shadow transition-colors border border-gray-200';
+                bubble.textContent = prompt;
+                bubble.addEventListener('click', () => {
+                    // Send the prompt as a message
+                    messageInput.value = prompt;
+                    sendMessage();
+                });
+                suggestionBubbles.appendChild(bubble);
+            });
+            suggestionBubbles.style.display = 'flex';
+        }
+        renderSuggestionBubbles();
 
         // Helper to scroll to the bottom
         function scrollToBottom() {
@@ -259,6 +288,12 @@
 
         // Send message functionality
         const sendMessage = async () => {
+            // Hide suggestion bubbles after first user message
+            if (!userHasSentMessage) {
+                userHasSentMessage = true;
+                renderSuggestionBubbles();
+            }
+
             const message = messageInput.value.trim();
             if (!message) return;
 
