@@ -226,6 +226,17 @@
 
         // Set up input placeholder (static or animated)
         let stopPlaceholderAnimation;
+        if (
+            typeof window.echoConfig.inputPlaceholder === 'string' &&
+            window.echoConfig.inputPlaceholder.trim().startsWith('[') &&
+            window.echoConfig.inputPlaceholder.trim().endsWith(']')
+        ) {
+            try {
+                window.echoConfig.inputPlaceholder = JSON.parse(window.echoConfig.inputPlaceholder);
+            } catch (e) {
+                // If parsing fails, fallback to the string as-is
+            }
+        }
         if (Array.isArray(window.echoConfig.inputPlaceholder)) {
             stopPlaceholderAnimation = animatePlaceholders(window.echoConfig.inputPlaceholder, messageInput);
         } else {
