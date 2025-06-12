@@ -188,6 +188,50 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        // Placeholder animation logic
+        function animatePlaceholders(placeholders, inputElement) {
+            let current = 0;
+            let typing = true;
+            let charIndex = 0;
+            let timeoutId;
+
+            function type() {
+                if (!Array.isArray(placeholders) || placeholders.length === 0) return;
+                const text = placeholders[current];
+                if (typing) {
+                    if (charIndex < text.length) {
+                        inputElement.setAttribute('placeholder', text.slice(0, charIndex + 1));
+                        charIndex++;
+                        timeoutId = setTimeout(type, 60);
+                    } else {
+                        typing = false;
+                        timeoutId = setTimeout(type, 1200); // Pause before erasing
+                    }
+                } else {
+                    if (charIndex > 0) {
+                        inputElement.setAttribute('placeholder', text.slice(0, charIndex - 1));
+                        charIndex--;
+                        timeoutId = setTimeout(type, 30);
+                    } else {
+                        typing = true;
+                        current = (current + 1) % placeholders.length;
+                        timeoutId = setTimeout(type, 400); // Pause before next prompt
+                    }
+                }
+            }
+            type();
+            // Return a function to stop the animation if needed
+            return () => clearTimeout(timeoutId);
+        }
+
+        // Set up input placeholder (static or animated)
+        let stopPlaceholderAnimation;
+        if (Array.isArray(window.echoConfig.inputPlaceholder)) {
+            stopPlaceholderAnimation = animatePlaceholders(window.echoConfig.inputPlaceholder, messageInput);
+        } else {
+            messageInput.setAttribute('placeholder', window.echoConfig.inputPlaceholder || 'Ask your question...');
+        }
+
         // Toggle chat window
         chatToggle.addEventListener('click', () => {
             chatWindow.classList.remove('hidden');
