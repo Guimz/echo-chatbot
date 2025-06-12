@@ -33,9 +33,16 @@
     link.href = 'https://chat.echo.saltoai.com/styles.css';
     document.head.appendChild(link);
 
+    // Load Showdown.js for Markdown rendering
+    const showdownScript = document.createElement('script');
+    showdownScript.src = 'https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js';
+    document.head.appendChild(showdownScript);
+
     // Wait for Tailwind to load before initializing
     tailwindScript.onload = () => {
-        initializeWidget();
+        showdownScript.onload = () => {
+            initializeWidget();
+        };
     };
 
     // Function to get config from Cloudflare KV
@@ -374,7 +381,9 @@
 
                 const botDiv = document.createElement('div');
                 botDiv.className = 'p-3 rounded-lg bg-gray-100 text-gray-800 w-full';
-                botDiv.textContent = botResponse;
+                // Convert markdown to HTML
+                const converter = new showdown.Converter();
+                botDiv.innerHTML = converter.makeHtml(botResponse);
                 botWrapper.appendChild(botDiv);
 
                 messagesContainer.appendChild(botWrapper);
