@@ -292,6 +292,9 @@
             if (!userHasSentMessage) {
                 userHasSentMessage = true;
                 renderSuggestionBubbles();
+                if (stopPlaceholderAnimation) {
+                    stopPlaceholderAnimation();
+                }
             }
 
             const message = messageInput.value.trim();
