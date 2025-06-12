@@ -88,6 +88,19 @@
     }
 
     function createWidget() {
+        // Fix for inputPlaceholder being a JSON string instead of an array
+        if (
+            typeof window.echoConfig.inputPlaceholder === 'string' &&
+            window.echoConfig.inputPlaceholder.trim().startsWith('[') &&
+            window.echoConfig.inputPlaceholder.trim().endsWith(']')
+        ) {
+            try {
+                window.echoConfig.inputPlaceholder = JSON.parse(window.echoConfig.inputPlaceholder);
+            } catch (e) {
+                // If parsing fails, fallback to the string as-is
+            }
+        }
+
         // Determine position class
         const positionClass = (() => {
             const pos = (window.echoConfig.position || 'bottom-right').toLowerCase();
@@ -151,7 +164,7 @@
                                    style="color: ${window.echoConfig.inputTextColor}; outline: none; transition: box-shadow 0.2s;"
                                    onfocus="this.style.boxShadow='0 0 0 2px ${window.echoConfig.inputHighlightBoxColor}'"
                                    onblur="this.style.boxShadow='none'"
-                                   placeholder="${window.echoConfig.inputPlaceholder}">
+                                   placeholder="${Array.isArray(window.echoConfig.inputPlaceholder) ? '' : window.echoConfig.inputPlaceholder}">
                             <button id="send-message" 
                                     class="px-4 py-2 rounded-lg transition-colors font-semibold"
                                     style="background-color: ${window.echoConfig.primaryColor}; color: ${window.echoConfig.textColor}">
@@ -226,17 +239,6 @@
 
         // Set up input placeholder (static or animated)
         let stopPlaceholderAnimation;
-        if (
-            typeof window.echoConfig.inputPlaceholder === 'string' &&
-            window.echoConfig.inputPlaceholder.trim().startsWith('[') &&
-            window.echoConfig.inputPlaceholder.trim().endsWith(']')
-        ) {
-            try {
-                window.echoConfig.inputPlaceholder = JSON.parse(window.echoConfig.inputPlaceholder);
-            } catch (e) {
-                // If parsing fails, fallback to the string as-is
-            }
-        }
         if (Array.isArray(window.echoConfig.inputPlaceholder)) {
             stopPlaceholderAnimation = animatePlaceholders(window.echoConfig.inputPlaceholder, messageInput);
         } else {
