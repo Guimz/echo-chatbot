@@ -101,6 +101,9 @@
             }
         }
 
+        // Debug log
+        console.log('inputPlaceholder:', window.echoConfig.inputPlaceholder, 'Type:', typeof window.echoConfig.inputPlaceholder, 'IsArray:', Array.isArray(window.echoConfig.inputPlaceholder));
+
         // Determine position class
         const positionClass = (() => {
             const pos = (window.echoConfig.position || 'bottom-right').toLowerCase();
