@@ -381,10 +381,38 @@
 
                 const botDiv = document.createElement('div');
                 botDiv.className = 'p-3 rounded-lg bg-gray-100 text-gray-800 w-full';
+
+                // Support for quickreplies (time slot bubbles)
+                let botMessage = botResponse;
+                let quickReplies = null;
+                // If the response is an object with message and quickreplies
+                if (typeof botResponse === 'object' && botResponse !== null && ('message' in botResponse || 'quickreplies' in botResponse)) {
+                    botMessage = botResponse.message || '';
+                    quickReplies = Array.isArray(botResponse.quickreplies) ? botResponse.quickreplies : null;
+                }
+
                 // Convert markdown to HTML
                 const converter = new showdown.Converter();
-                botDiv.innerHTML = converter.makeHtml(botResponse);
+                botDiv.innerHTML = converter.makeHtml(botMessage);
                 botWrapper.appendChild(botDiv);
+
+                // Render quick reply bubbles if present
+                if (quickReplies && quickReplies.length > 0) {
+                    const qrContainer = document.createElement('div');
+                    qrContainer.className = 'flex flex-wrap gap-2 mt-2';
+                    quickReplies.forEach(qr => {
+                        const bubble = document.createElement('button');
+                        bubble.type = 'button';
+                        bubble.className = 'rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1 text-sm shadow transition-colors border border-gray-200';
+                        bubble.textContent = qr.title;
+                        bubble.addEventListener('click', () => {
+                            messageInput.value = qr.payload;
+                            sendMessage();
+                        });
+                        qrContainer.appendChild(bubble);
+                    });
+                    botWrapper.appendChild(qrContainer);
+                }
 
                 messagesContainer.appendChild(botWrapper);
                 scrollToBottom();
